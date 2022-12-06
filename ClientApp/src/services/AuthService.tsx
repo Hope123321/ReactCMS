@@ -1,3 +1,4 @@
+import { BasicResponse } from "../types/_common/basic/http";
 
 export const login = async (username: string, password: string) => {
 
@@ -13,14 +14,16 @@ export const login = async (username: string, password: string) => {
 			})
 		}
 	);
-	const data = await response.json();
-	console.log(data);
-
-	const token = data.token;
-	if (token) {
-		localStorage.setItem('user', JSON.stringify(data));
-	}
-
+	const data: BasicResponse = await response.json();
+	//console.log(data);
+	//if (data.ResponseNo=='0000') {
+	//	const res: any = data.ResponseData;
+	//	console.log(res);
+	//	const token = res.Token;
+	//	if (token) {
+	//		localStorage.setItem('user', JSON.stringify(token));
+	//	}
+	//}
 	return data;
 };
 
