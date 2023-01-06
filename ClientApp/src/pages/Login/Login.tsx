@@ -14,15 +14,17 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { login } from '../../services/AuthService';
 import { BasicResponse } from '../../types/_common/basic/http';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { User } from '../../types/_common/login/login';
+import UserContext from '../../contexts/UserContext';
+import Loading from '../../components/Loading/Loading';
 
 function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-                Your Website
+            <Link color="inherit" href="https://retex.com.tw/">
+                Retex
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -33,25 +35,34 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function Login() {
-
+    //登入訊息
     const [LoginMsg, setLoginMsg] = useState<string>('');
-
-
+    //登入資訊Context
+    const userContext:any = useContext(UserContext)
+    //讀取動畫
+    const [OpenLoading, SetOpenLoading] = useState<boolean>(false);
+    //登入確認
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         let values: any = {
             account: data.get('account'),
             password: data.get('password'),
+            remember: data.get('remember')?true:false,
         };
-
-        let res: BasicResponse = await login(values.account, values.password);
-        console.log(res);
+        console.log(values);
+        //讀取動畫開啟
+        SetOpenLoading(true);
+        try{
+        // #region 登入作業
+        let res: BasicResponse = await login(values.account, values.password,values.remember);
         if (res.ResponseNo == '0000') {
             const resData: any = res.ResponseData;
             if (resData.Token) {
                 let user: User = { UserNo: resData.UserNo, UserNa: resData.UserNa, Token: resData.Token };
                 localStorage.setItem('user', JSON.stringify(user));
+                //設定資料
+                userContext[1](user);
             }
             else {
                 setLoginMsg("登入出現異常，請休息一會再嘗試。");
@@ -59,6 +70,14 @@ export default function Login() {
         } else {
             setLoginMsg(res.ResponseNa);
         }
+        // #endregion
+        }catch(ex){
+            setLoginMsg("登入出現異常，請休息一會再嘗試。");
+        }
+        //讀取動畫關閉(避免畫面閃一下，最短都暫存兩秒再關掉)
+        setTimeout(()=>{
+            SetOpenLoading(false);
+        },2000);
     };
 
     return (
@@ -119,8 +138,9 @@ export default function Login() {
                                 helperText={LoginMsg !== '' ? LoginMsg:""}
                             />
                             <FormControlLabel
-                                control={<Checkbox value="remember" color="primary" />}
+                                control={<Checkbox  value="remember" color="primary" />}
                                 label="Remember me"
+                                name="remember"
                             />
                             <Button
                                 type="submit"
@@ -136,17 +156,19 @@ export default function Login() {
                                         Forgot password?
                                     </Link>
                                 </Grid>
-                                <Grid item>
+                                {/* <Grid item>
                                     <Link href="#" variant="body2">
                                         {"Don't have an account? Sign Up"}
                                     </Link>
-                                </Grid>
+                                </Grid> */}
                             </Grid>
                             <Copyright sx={{ mt: 5 }} />
                         </Box>
                     </Box>
                 </Grid>
             </Grid>
+            {/* 讀取動畫初始化 */}
+            <Loading Open={OpenLoading} setOpen={SetOpenLoading}/>
         </ThemeProvider>
     );
 }

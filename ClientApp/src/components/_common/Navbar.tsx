@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import AppBar from "@mui/material/AppBar";
 import Drawer from "@mui/material/Drawer";
@@ -23,12 +23,14 @@ import Box from "@mui/material/Box";
 
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
-import { useTheme } from "@mui/material/styles";
+import { createTheme, ThemeProvider, useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { Link } from "react-router-dom";
-import { Menu } from "../types/_common/Menu/Menu";
 import React from "react";
+import { MenuViewModel } from "../../types/_common/Menu/Menu";
+import UserAvatar from "../UserAvatar/UserAvatar";
+import { red } from "@mui/material/colors";
 
 const styles = {
   navlinks: {
@@ -50,7 +52,7 @@ const styles = {
 
 function Navbar() {
   //console.log(process.env);
-  const menuList: Array<Menu> = [
+  const menuList: Array<MenuViewModel> = [
     { MenuNo: "Home", MenuNa: "個人首頁", MenuLink: "/", parentMenuNo: "" },
     {
       MenuNo: "Contact",
@@ -64,7 +66,13 @@ function Navbar() {
       MenuNa: "關於我們",
       MenuLink: "/About",
       parentMenuNo: "",
-    },
+      },
+      {
+          MenuNo: "Counter",
+          MenuNa: "計數器",
+          MenuLink: "/counter",
+          parentMenuNo: "",
+      },
     {
       MenuNo: "POS",
       MenuNa: "前台功能管理",
@@ -114,21 +122,21 @@ function Navbar() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   //sidebar開關控制，
   const [openSidebar, setOpenSidebar] = useState(false);
-
   const [openMenuNested, setOpenMenuNested] = useState<Array<string>>([]);
 
   //State監測
   useEffect(() => {
-    console.log("openMenuNested=");
-    console.log(openMenuNested);
+   
   });
-
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <AppBar
         position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{
+           zIndex: (theme) => theme.zIndex.drawer + 1,
+          //  backgroundColor:(theme) =>{ console.log(theme.palette.primary.main);return theme.palette.primary.main}
+         }}
       >
         <Toolbar>
           {isMobile ? (
@@ -147,6 +155,7 @@ function Navbar() {
               CMS
             </Typography>
           </Link>
+           <UserAvatar/>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -204,7 +213,7 @@ function Navbar() {
           </List> */}
         </Box>
       </Drawer>
-    </>
+    </ThemeProvider>
   );
 
   // #region private function
@@ -230,7 +239,7 @@ function Navbar() {
     return ret;
   }
   //取得Menu
-  function GetMenu(menuList: Array<Menu>): JSX.Element {
+  function GetMenu(menuList: Array<MenuViewModel>): JSX.Element {
     return (
       <>
       <List>

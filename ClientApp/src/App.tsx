@@ -14,14 +14,68 @@ import M0003 from "./pages/Manager/M0003";
 import M0004 from "./pages/Manager/M0004";
 import M0005 from "./pages/Manager/M0005";
 import M0001 from "./pages/Manager/M0001";
-import { UserProvider } from "./contexts/UserContext";
 import Login from "./pages/Login/Login";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { blue, grey, red } from "@mui/material/colors";
+import { UserProvider } from "./contexts/UserContext";
+import { Profile } from "./pages/Account/Profile";
+import { Counter } from "./pages/_common/Counter";
 
+// 自訂-全系統樣式
+const theme = createTheme({
+    palette:{
+      primary:{
+        main:blue[800]
+      }
+    }
+    ,
+    components: {
+        MuiLink: {
+            styleOverrides: {
+                // 元件樣式覆寫
+                root:({ ownerState, theme: _theme }) => ({
+                    ...({
+                      textDecoration: 'none',
+                      color: _theme.palette.text.primary,
+                      ":hover":{
+                        color:_theme.palette.text.primary,
+                        textDecoration: 'none',
+                      }
+                    })
+                    // ,
+                    // [`&.${sliderClasses.valueLabelOpen}`]: {
+                    //   transform: 'none',
+                    //   top: 'initial',
+                    // },
+                  })
+                //  {
+                // //   fontSize: 32,
+                //   textDecoration:"none",
+                //   color:'text'
+                // },
+            },
+            variants: [
+                {
+                  props: { underline: 'none' },
+                  style: {
+                    color:"primary",
+                    textTransform: 'none',
+                    border: `2px dashed ${blue[500]}`,
+                  }
+                }
+              ]
+        }
+    }
+});
+console.log(theme);
 
 function App() {
-    return (
 
+
+    
+    return (
         <Router>
+            <ThemeProvider theme={theme}>
             <UserProvider>
                 <Box sx={{ display: "flex" }}>
                     <Navbar />
@@ -30,10 +84,12 @@ function App() {
                         <Routes>
                             {/* 基本功能 */}
                             <Route path="/" element={<Home />} />
+                            <Route path="/Profile" element={<Profile />} />
                             <Route path="/Login" element={<Login />} />
                             <Route path="/about" element={<About />} />
                             <Route path="/contact" element={<Contact />} />
-                            <Route path="/faq" element={<Faq />} />
+                                <Route path="/faq" element={<Faq />} />
+                                <Route path="/counter" element={<Counter />} />
                             {/* 前台管理模組 */}
                             <Route path="/POS/P0001" element={<P0001 />} />
                             {/* 後台管理模組 */}
@@ -52,6 +108,7 @@ function App() {
         <Route path="/faq" component={Faq} />
       </Switch> */}
             </UserProvider>
+            </ThemeProvider>
         </Router>
     );
 }

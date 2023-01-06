@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
@@ -31,6 +31,10 @@
     <None Remove="ClientApp\package-lock.json" />
     <None Remove="ClientApp\package.json" />
     <None Remove="ClientApp\public\manifest.json" />
+    <None Remove="ClientApp\src\components\HelpDialog\shop\ShopDialogBySingle.tsx" />
+    <None Remove="ClientApp\src\pages\_common\file.ts" />
+    <None Remove="ClientApp\src\reducer\Counter.ts" />
+    <None Remove="ClientApp\src\store\configureStore.ts" />
     <None Remove="ClientApp\tsconfig.json" />
   </ItemGroup>
 
@@ -64,6 +68,15 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Page\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\components\HelpDialog\shop\ShopDialogBySingle.tsx" />
+    <TypeScriptCompile Include="ClientApp\src\pages\_common\file.ts" />
+    <TypeScriptCompile Include="ClientApp\src\reducer\Counter.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\store\configureStore.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

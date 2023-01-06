@@ -1,5 +1,5 @@
 //菜單結構
-export interface Menu {
+export interface MenuViewModel {
   MenuNo: string
   MenuNa: string
   MenuLink: string
